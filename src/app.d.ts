@@ -8,6 +8,23 @@ declare global {
 		}
 	} // interface Error {}
 	// interface Locals {}
+
+	type Clue = {
+		title: string;
+		description: string;
+		answer: string;
+		notes: string;
+		location: string;
+	}
+
+	type Quest = {
+		id: string;
+		name: string;
+		description: string;
+		author: string;
+		clues: Clue[];
+		createdAt: Date;
+	}
 } // interface PageData {}
 // interface PageState {}
 
