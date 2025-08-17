@@ -27,6 +27,7 @@ export const load: PageServerLoad = async (event) => {
             .where(or(eq(user.id, ''), ...troopIds.map(id=>eq(user.id, id))))
 
         return {
+            userid: event.locals.user.id,
             troop: troop.map(u => ({
                 id: u.id, username: u.username,
             }))
@@ -50,7 +51,7 @@ export const actions = {
             .where(eq(user.id, userId))
             .returning()
 
-        // TODO automatically add to other's troop as well
+
 
         if (result.length > 0) {
             return { success: true, quest: result[0] };

@@ -9,6 +9,7 @@
         username: string;
     }
 
+    let userid = $state(data.userid || '');
     let troop = $state(data.troop) as USER[];
 
 
@@ -30,10 +31,11 @@
 <label for="troop-add">Add to Troop</label>
 <input bind:value={new_member} id="troop-add" type="text" class="bg-white p-2 rounded-md"/>
 <button onclick={addMember} class="bg-blue-500 p-2 text-white rounded-md">Recruit Member</button>
+<i class="mb-4"> Your code: {userid}</i>
 
+<h1 class="font-semibold text-2xl">Troop</h1>
 {#each troop as user}
     <div>
-        <p>{user.id}</p>
         <p>{user.username}</p>
     </div>
 {/each}
