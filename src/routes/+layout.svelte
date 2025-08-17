@@ -22,7 +22,7 @@
 
 <div class="bg-amber-200 min-h-screen flex flex-col items-center p-8">
 	{#if user}
-		<div class="w-96 h-96 bg-red-200">
+		<div class="w-96 h-64 bg-red-200">
 		</div>
 		<div class="flex flex-row gap-20 p-4 sticky transition-all duration-300">
 			<a href="/quests" class="leading-7 underline decoration-[0.5px] hover:underline-offset-4 {nav_select === -2 ? 'decoration-transparent font-semibold' : ''}">quests</a>

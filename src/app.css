@@ -4,3 +4,11 @@
     @apply text-blue-800 dark:text-blue-600 active:text-emerald-600 dark:active:text-emerald-600 hover:text-indigo-800 dark:hover:text-indigo-600 hover:scale-125 transition-all;
     /* visited:text-purple-900 truncate */
 }
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}

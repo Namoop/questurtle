@@ -12,7 +12,7 @@ declare global {
 	type Clue = {
 		title: string;
 		description: string;
-		answer: string;
+		answers: string;
 		notes: string;
 		location: string;
 	}

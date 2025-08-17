@@ -6,8 +6,8 @@ export const user = sqliteTable('user', {
 	username: text('username').notNull().unique(),
 	troop: text('troop', {mode: 'json'}).notNull().default('[]'), // JSON array of user IDs in the troop
 	passwordHash: text('password_hash').notNull(),
-	quests: text('quests', {mode: 'json'}).notNull().default('[]'), // accepted quests (IDs)
-	pending: text('pending', {mode: 'json'}).notNull().default('[]'), // array of offered quests that the user has not yet accepted
+	quests: text('quests', {mode: 'json'}).notNull().default('[]'), // accepted quests {id: string, progress: number}
+	pending: text('pending', {mode: 'json'}).notNull().default('[]'), // array of offered quests that the user has not yet accepted TODO
 	created: text('created', {mode: 'json'}).notNull().default('[]'), // array of quest IDs that the user has created
 });
 
