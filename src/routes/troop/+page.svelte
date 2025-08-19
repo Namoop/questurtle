@@ -24,16 +24,27 @@
             console.error(err)
         }
     }
-    console.log(page.url)
+    const troopURL = page.url.origin + '/troop/' + userid + "/"
     onMount(async () => {
         if (userid) {
-            qrdata = await QRCode.toDataURL(page.url.origin + '/troop/' + userid);
+            qrdata = await QRCode.toDataURL(troopURL);
         }
     });
+
+    function copyURL () {
+        navigator.clipboard.writeText(troopURL).then(() => {
+            console.log('URL copied to clipboard');
+        }).catch(err => {
+            console.error('Failed to copy URL: ', err);
+        });
+    }
 </script>
 
 <div class="flex flex-col max-w-md items-center text-center">
     <img src={qrdata} alt="QR Code" class="mb-4 rounded-xl w-48" />
+    <button onclick={copyURL} class="text-blue-500 underline mb-4 hover:scale-105 active:scale-100">
+        Click to copy url
+    </button>
     <p>Have another quester scan your QR code to join each other's troops and send each other on quests!</p>
 </div>
 
