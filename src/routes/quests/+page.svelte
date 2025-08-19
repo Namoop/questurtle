@@ -9,6 +9,11 @@
 </script>
 
 <div class="py-8 w-md">
+    {#if quests.length === 0}
+        <p class="text-center text-gray-500">You have no quests yet. Find one in the public tab!</p>
+    {:else}
+        <h1 class="text-2xl font-bold mb-4">Your Quests</h1>
+    {/if}
     {#each quests as quest}
         <div class="bg-white p-4 rounded shadow mb-4">
             <h2 class="text-xl font-bold">{quest.name}</h2>

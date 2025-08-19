@@ -22,9 +22,9 @@ export const quests = sqliteTable('quests', {
 	description: text('description').notNull(),
 	author: text('author').notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	clues: text('clues', {mode: 'json'}).notNull().default('[]'), // JSON array of clues
+	clues: text('clues', {mode: 'json'}).notNull().default([]), // JSON array of clues
 	public: integer('public').notNull().default(0), // 0 is private, 1 is limited, 2 is public
-	shared: text('shared', {mode: 'json'}).notNull().default('[]'), // JSON array of user IDs who can access the quest
+	shared: text('shared', {mode: 'json'}).notNull().default([]), // JSON array of user IDs who can access the quest
 });
 
 export type Session = typeof session.$inferSelect;
