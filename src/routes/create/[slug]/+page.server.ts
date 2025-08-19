@@ -1,7 +1,7 @@
 import type {PageServerLoad} from "./$types";
 import {db} from "$lib/server/db";
 import {quests, user} from "$lib/server/db/schema";
-import {and, eq, or} from "drizzle-orm";
+import {and, eq, or, sql} from "drizzle-orm";
 
 export const load: PageServerLoad = async (event) => {
     // fetch the user's created quests from the database
@@ -29,19 +29,20 @@ export const load: PageServerLoad = async (event) => {
         .where(eq(user.id, userId))
     if (userData.length === 0) return {};
 
-    const troopIds = JSON.parse(userData[0].troop as string) as string[];
+    const troopIds = userData[0].troop as string[];
     const troop = await db
         .select()
         .from(user)
         .where(or(eq(user.id, ''), ...troopIds.map(id=>eq(user.id, id))))
 
     return {
-        quest: {
-            ...quest,
-            clues: JSON.parse(quest.clues as string) as Clue[], // Assuming you have a Clue type defined
-        } as Quest,
+        quest,
+        // quest: {
+        //     ...quest,
+        //     // clues: JSON.parse(quest.clues as string) as Clue[], // Assuming you have a Clue type defined
+        // } as Quest,
         troop: troop.map(u => ({
-            id: u.id, username: u.username, assigned: JSON.parse(u.quests as string).map(q=>q.id).includes(questId),
+            id: u.id, username: u.username, assigned: (u.quests as Quest[]).map((q: { id: any; })=>q.id).includes(questId),
         }))
     };
 };
@@ -75,7 +76,7 @@ export const actions = {
     save: async (event) => {
         const formData = await event.request.formData();
         const questId = event.params.slug;
-        const clues = formData.get('clues') as string;
+        const clues = JSON.parse(formData.get('clues') as string);
 
         if (!event.locals.user) {
             return { success: false, error: "You must be logged in to update a quest." };
@@ -104,10 +105,11 @@ export const actions = {
         .where(eq(user.id, memberId))
 
         const result = await db
-        .update(user)
-        .set({quests: JSON.stringify([...JSON.parse(member[0].quests as string), {id: questId, progress: 0}])})
+            .update(user)
+            .set({quests: sql`json_insert(quests, '$[#]', json(${JSON.stringify({id: questId, progress: 0})}))`})
             .where(eq(user.id, memberId))
             .returning()
+        // TODO assure unique
 
         if (result.length > 0) {
             return { success: true, quest: result[0] };
@@ -127,7 +129,7 @@ export const actions = {
 
         const result = await db
         .update(user)
-        .set({quests: JSON.stringify(JSON.parse(member[0].quests as string).filter(q => q.id !== questId))})
+        .set({quests: sql`json_remove(quests, '$[?(@.id == ${questId})]')`})
         .where(eq(user.id, memberId))
         .returning()
 

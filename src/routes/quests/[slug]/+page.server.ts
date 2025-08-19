@@ -16,7 +16,7 @@ export const load: PageServerLoad = async (event) => {
     .from(user)
     .where(eq(user.id, userId))
 
-    const questData = JSON.parse(userData[0].quests as string) as {id: string, progress: number }[];
+    const questData = userData[0].quests as {id: string, progress: number }[];
     if (!questData.map(q => q.id).includes(questId)) return {}
 
     const results = await db
@@ -28,14 +28,14 @@ export const load: PageServerLoad = async (event) => {
         throw new Error("Quest not found or you do not have permission to view it.");
     }
 
-    const quest = results[0];
+    const quest = results[0] as Quest;
     const progress = questData.filter(q => q.id === questId)[0].progress;
 
 
     return {
         quest: {
             ...quest,
-            clues: JSON.parse(quest.clues as string).slice(0, progress+1) as Clue[], // Assuming you have a Clue type defined
+            clues: quest.clues.slice(0, progress+1) as Clue[], // Assuming you have a Clue type defined
         } as Quest,
     };
 };
@@ -46,7 +46,7 @@ export const actions = {
         const questId = event.params.slug;
         const clueId = parseInt(formData.get('clueId') as string);
         const answer = formData.get('clue-answer-'+ clueId) as string;
-        const userId = event.locals.user.id;
+        const userId = event.locals.user!.id;
 
         // fetch quest
         const quest = await db
@@ -77,7 +77,7 @@ export const actions = {
         // save to db
         await db
             .update(user)
-            .set({quests: JSON.stringify(questData)})
+            .set({quests: questData})
             .where(eq(user.id, userId))
             .returning();
 

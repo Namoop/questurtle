@@ -17,16 +17,10 @@ export const load: PageServerLoad = async (event) => {
         .select()
         .from(quests)
         .where(eq(quests.author, userId))
-        .orderBy(quests.createdAt);
-
-    const my_quests = results.map(q => {
-        // const clues = JSON.parse(q.clues) as Clue;
-        // q.clues = clues;
-        return q as Quest;
-    })
+        .orderBy(quests.createdAt) as Quest[];
 
     return {
-        my_quests
+        my_quests: results
     };
 
 };
