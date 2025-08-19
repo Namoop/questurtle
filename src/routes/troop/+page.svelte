@@ -1,8 +1,10 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
-    import type {PageServerData, ActionData} from "./$types";
+    import type {PageServerData} from "./$types";
+    import {page} from "$app/state";
+    import QRCode from 'qrcode'
+    import {onMount} from "svelte";
 
-    let {data, form }: {data: PageServerData, form: ActionData } = $props();
+    let {data }: {data: PageServerData } = $props();
 
     type USER = {
         id: string;
@@ -12,28 +14,39 @@
     let userid = $state(data.userid || '');
     let troop = $state(data.troop) as USER[];
 
+    let just_added = page.url.hash.slice(1);
 
-    let new_member = $state('')
-    async function addMember () {
-        const users = troop.map(u => u.id)
-        if (users.includes(new_member)) return false;
-
-        const form = new FormData();
-        form.append('troop', JSON.stringify(users.concat([new_member])));
-        const response = await fetch('?/add', {
-            method: 'POST',
-            body: form
-        });
+    let qrdata = $state('');
+    const generateQR = async (text: string) => {
+        try {
+            console.log(await QRCode.toDataURL(text))
+        } catch (err) {
+            console.error(err)
+        }
     }
+    console.log(page.url)
+    onMount(async () => {
+        if (userid) {
+            qrdata = await QRCode.toDataURL(page.url.origin + '/troop/' + userid);
+        }
+    });
 </script>
 
-<!--add to troop-->
-<label for="troop-add">Add to Troop</label>
-<input bind:value={new_member} id="troop-add" type="text" class="bg-white p-2 rounded-md"/>
-<button onclick={addMember} class="bg-blue-500 p-2 text-white rounded-md">Recruit Member</button>
-<i class="mb-4"> Your code: {userid}</i>
+<div class="flex flex-col max-w-md items-center text-center">
+    <img src={qrdata} alt="QR Code" class="mb-4 rounded-xl w-48" />
+    <p>Have another quester scan your QR code to join each other's troops and send each other on quests!</p>
+</div>
 
-<h1 class="font-semibold text-2xl">Troop</h1>
+{#if just_added}
+    <div class="flex items-center justify-end flex-col m-4 p-4 bg-emerald-50 rounded-xl shadow-lg">
+        <p class="font-semibold text-green-800">{just_added}</p>
+        <p>has successfully been added to your troop!</p>
+    </div>
+{/if}
+
+<hr class="border-b-1 border-black w-6/12 my-8">
+
+<h1 class="font-semibold text-2xl mt-4">Troop</h1>
 {#each troop as user}
     <div>
         <p>{user.username}</p>
