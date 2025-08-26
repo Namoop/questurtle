@@ -1,7 +1,6 @@
 <script lang="ts">
 
     import type {PageServerData} from "./$types";
-    import type {User} from "$lib/server/db/schema";
     import { enhance } from '$app/forms';
     import { onMount } from 'svelte';
     import {page} from "$app/state";
@@ -10,7 +9,6 @@
     let {data}: { data: PageServerData } = $props();
 
     let quest = $state(data.quest) as Quest;
-    // @ts-ignore from +layout.server.ts
     let user = data.user as User;
     let hash = $derived(parseInt(page.url.hash.slice(1) || 0));
     let troop = $state(data.troop) as {id: string, username: string, assigned: boolean}[]
@@ -54,6 +52,15 @@
             method: 'POST',
             body: form
         });
+        if (response.ok) {
+            // Update the troop state to reflect the assignment
+            const member = troop.find(m => m.id === id);
+            if (member) {
+                member.assigned = true;
+            }
+        } else {
+            console.error("Failed to assign member:", response.statusText);
+        }
     }
 
     async function deAssignMember(id: string) {
@@ -63,6 +70,15 @@
             method: 'POST',
             body: form,
         })
+        if (response.ok) {
+            // (optimistically) Update the troop state to reflect the de-assignment
+            const member = troop.find(m => m.id === id);
+            if (member) {
+                member.assigned = false;
+            }
+        } else {
+            console.error("Failed to de-assign member:", response.statusText);
+        }
     }
 </script>
 
@@ -85,7 +101,7 @@
     <form hidden="{hash !== 0}" class="m-4 bg-white rounded-lg p-4" onchange={(e)=>{e.currentTarget.submit()}} method="post" action="?/update" use:enhance>
         <div class="mb-4">
             <label for="name" class="block text-sm font-medium text-gray-700">Quest Name</label>
-            <input type="text" id="name" name="name" value={quest.name} class="p-1 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+            <input type="text" id="name" name="name" value={quest.title} class="p-1 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
         </div>
         <div class="mb-4">
             <label for="description" class="block text-sm font-medium text-gray-700">Description</label>

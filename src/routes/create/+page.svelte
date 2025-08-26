@@ -18,7 +18,7 @@
 <div class="py-8 max-w-md">
 {#each quests as quest}
     <div class="border border-gray-100 p-4 rounded shadow mb-4">
-        <h2 class="text-xl font-bold">{quest.name}</h2>
+        <h2 class="text-xl font-bold">{quest.title}</h2>
         <p>{quest.description}</p>
         <a class="link" href="/create/{quest.id}">Edit quest</a>
     </div>

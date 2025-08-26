@@ -2,31 +2,38 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		interface Locals {
-			user: import('$lib/server/auth').SessionValidationResult['user'];
-			session: import('$lib/server/auth').SessionValidationResult['session']
-		}
-	} // interface Error {}
-	// interface Locals {}
-
-	type Clue = {
-		title: string;
-		description: string;
-		answers: string;
-		notes: string;
-		location: string;
+		// interface Error {}
+		// interface Locals {}
+		// interface PageData {}
+		// interface PageState {}
+		// interface Platform {}
 	}
-
+	type User = {
+		id: string,
+		username: string,
+		email: string,
+		troop: string[],
+		quests: {
+			id: string,
+			progress: number
+		}[],
+		assigned: {
+			id: string,
+			progress: number
+		}[]
+	}
 	type Quest = {
-		id: string;
-		name: string;
-		description: string;
-		author: string;
-		clues: Clue[];
-		createdAt: Date;
+		id: string,
+		title: string,
+		description: string,
+		clues: Clue[]
 	}
-} // interface PageData {}
-// interface PageState {}
+	type Clue = {
+		id: string,
+		description: string,
+		answers: string,
+	}
+}
 
-// interface Platform {}
 export {};
+

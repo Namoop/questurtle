@@ -1,42 +1,20 @@
 import type {PageServerLoad} from "./$types";
-import {db} from "$lib/server/db";
-import {quests, user} from "$lib/server/db/schema";
-import {and, eq, or} from "drizzle-orm";
+import {pb, requireLogin} from "$lib";
 
 export const load: PageServerLoad = async (event) => {
     // fetch the user's assigned quests from the database
-    if (!event.locals.user) {
-        return {};
-    }
+    const user = await requireLogin()
     const questId = event.params.slug;
-    const userId = event.locals.user.id;
 
-    const userData = await db
-    .select()
-    .from(user)
-    .where(eq(user.id, userId))
+    const progress = user.assigned.filter(q => q.id === questId)[0]?.progress || 0;
 
-    const questData = userData[0].quests as {id: string, progress: number }[];
-    if (!questData.map(q => q.id).includes(questId)) return {}
-
-    const results = await db
-        .select()
-        .from(quests)
-        .where(eq(quests.id, questId));
-
-    if (results.length === 0) {
-        throw new Error("Quest not found or you do not have permission to view it.");
-    }
-
-    const quest = results[0] as Quest;
-    const progress = questData.filter(q => q.id === questId)[0].progress;
-
+    const quest = await pb.collection('turtlequests').getOne(questId);
 
     return {
         quest: {
             ...quest,
             clues: quest.clues.slice(0, progress+1) as Clue[], // Assuming you have a Clue type defined
-        } as Quest,
+        } as unknown as Quest,
     };
 };
 
@@ -46,41 +24,25 @@ export const actions = {
         const questId = event.params.slug;
         const clueId = parseInt(formData.get('clueId') as string);
         const answer = formData.get('clue-answer-'+ clueId) as string;
-        const userId = event.locals.user!.id;
+        const user = await requireLogin();
 
-        // fetch quest
-        const quest = await db
-            .select()
-            .from(quests)
-            .where(eq(quests.id, questId))
+        const quest = await pb.collection('turtlequests').getOne(questId);
 
-        const clues = JSON.parse(quest[0].clues as string) as Clue[];
-        const clue = clues[clueId]
+        const clues = quest.clues as Clue[];
+        const clue = clues[clueId];
         const answers = clue.answers.split("\n");
-
         const correct = answers.includes(answer);
 
         if (!correct) {
             return { success: false, error: "Incorrect answer." };
         }
 
-        // fetch user data to update progress
-        const userData = await db
-            .select()
-            .from(user)
-            .where(eq(user.id, userId));
-
-        const questData = JSON.parse(userData[0].quests as string) as {id: string, progress: number }[];
-        const questInfo = questData.filter(q => q.id === questId)[0]
-        questInfo.progress = Math.max(questInfo.progress, clueId + 1)
-
-        // save to db
-        await db
-            .update(user)
-            .set({quests: questData})
-            .where(eq(user.id, userId))
-            .returning();
-
+        user.assigned = user.assigned || [];
+        const questInfo = user.assigned.filter((q: any) => q.id === questId)[0];
+        questInfo.progress = Math.max(questInfo.progress, clueId + 1);
+        await pb.collection("turtleusers").update(user.id, {
+            assigned: user.assigned
+        });
         return { success: true };
     }
 }
