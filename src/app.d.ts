@@ -6,24 +6,32 @@ declare global {
 			user: import('$lib/server/auth').SessionValidationResult['user'];
 			session: import('$lib/server/auth').SessionValidationResult['session']
 		}
-	} // interface Error {}
-	// interface Locals {}
-
-	type Clue = {
-		title: string;
-		description: string;
-		answers: string;
-		notes: string;
-		location: string;
 	}
 
+	type User = {
+		id: string,
+		username: string,
+		email: string,
+		troop: string[],
+		quests: {
+			id: string,
+			progress: number
+		}[],
+		assigned: {
+			id: string,
+			progress: number
+		}[]
+	}
 	type Quest = {
-		id: string;
-		name: string;
-		description: string;
-		author: string;
-		clues: Clue[];
-		createdAt: Date;
+		id: string,
+		title: string,
+		description: string,
+		clues: Clue[]
+	}
+	type Clue = {
+		id: string,
+		description: string,
+		answers: string,
 	}
 } // interface PageData {}
 // interface PageState {}

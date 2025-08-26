@@ -21,7 +21,6 @@
 </script>
 
 
-
 <div class="m-4 flex gap-4 items-center">
     <div class="w-16">
         <button disabled={hash === 0} class="text-4xl bg-white disabled:bg-gray-200 p-4 rounded-lg" onclick="{prevClue}"> ⮜ </button>
