@@ -55,7 +55,7 @@
     </div>
 {/if}
 
-<div class="py-8 w-md">
+<div class="py-8 w-full max-w-md">
     {#if quests.length === 0}
         <p class="text-center text-gray-500">You have no quests yet. Find one in the public tab!</p>
     {:else}

@@ -21,12 +21,12 @@
 </script>
 
 
-<div class="m-4 flex gap-4 items-center">
-    <div class="w-16">
-        <button disabled={hash === 0} class="text-4xl bg-white disabled:bg-gray-200 p-4 rounded-lg" onclick="{prevClue}"> ⮜ </button>
+<div class="w-full m-4 flex gap-4 items-center justify-center">
+    <div class="w-16 hidden md:block">
+        <button disabled={hash === 0} class="text-4xl bg-white disabled:bg-gray-200 p-4 border-gray-100 border-2 shadow-2xl rounded-lg font-extrabold" onclick="{prevClue}"> &lt; </button>
     </div>
     {#each quest.clues as clue, index}
-        <div class="bg-white p-10 rounded-lg flex" hidden="{hash !== index}">
+        <div class="w-full max-w-md bg-white p-10 rounded-lg flex" hidden="{hash !== index}">
             <div>
                 <!--            location?-->
             </div>
@@ -47,7 +47,16 @@
             </div>
         </div>
     {/each}
-    <div class="w-16">
-        <button disabled={hash === quest.clues.length-1} class="text-4xl bg-white disabled:bg-gray-200 p-4 rounded-lg" onclick={nextClue}> ⮞ </button>
+    <div class="w-16 hidden md:block">
+        <button disabled={hash === quest.clues.length} class="text-4xl bg-white disabled:bg-gray-200 p-4 border-gray-100 border-2 shadow-2xl rounded-lg font-extrabold" onclick={nextClue}> &gt; </button>
+    </div>
+</div>
+<div class="flex gap-8 m-4 items-center">
+    <div class="w-16 md:hidden">
+        <button disabled={hash === 0}                   class="text-4xl bg-white disabled:bg-gray-200 px-4 py-2 border-gray-100 border-2 shadow-2xl rounded-lg font-extrabold" onclick="{prevClue}"> &lt; </button>
+    </div>
+    <div>{hash}/{quest.clues.length}</div>
+    <div class="w-16 md:hidden">
+        <button disabled={hash === quest.clues.length-1}  class="text-4xl bg-white disabled:bg-gray-200 px-4 py-2 border-gray-100 border-2 shadow-2xl rounded-lg font-extrabold" onclick={nextClue}> &gt; </button>
     </div>
 </div>
