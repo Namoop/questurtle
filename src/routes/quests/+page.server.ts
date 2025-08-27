@@ -1,9 +1,9 @@
 import type {PageServerLoad} from "./$types";
-import { pb, requireLogin} from "$lib";
+import { requireLogin} from "$lib";
 
 export const load: PageServerLoad = async (event) => {
     // fetch the user's assigned quests from the database
-    const user = await requireLogin()
+    const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
     user.assigned = user.assigned || []
 
     const shared = (await pb.collection("turtlequests").getFullList({
@@ -35,7 +35,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions = {
     accept: async (event) => {
-        const user = await requireLogin()
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
         const formData = await event.request.formData();
         const questId = formData.get('questId') as string;
 

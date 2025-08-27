@@ -1,12 +1,15 @@
 import {fail, redirect} from '@sveltejs/kit';
-import {pb, requireLogin} from '$lib';
+import {requireLogin} from '$lib';
 import type {Actions, PageServerLoad} from './$types';
+import Pocketbase from "pocketbase";
+import {env} from "$env/dynamic/private";
 
 export const load: PageServerLoad = async (event) => {
-    if (pb.authStore.isValid) {
-        return redirect(302, '/quests');
-    }
-    return {};
+    // const pb = await requireLogin(event.cookies.get("pb_auth") || "");
+    // if (pb.authStore.isValid) {
+    //     return redirect(302, '/quests');
+    // }
+    // return {};
 };
 
 export const actions: Actions = {
@@ -14,6 +17,7 @@ export const actions: Actions = {
         const formData = await event.request.formData();
         const username = formData.get('username');
         const password = formData.get('password');
+        const pb = new Pocketbase(env.DATABASE_URL)
 
         if (!validateUsername(username)) {
             return fail(400, { message: 'Invalid username (min 3, max 31 characters, alphanumeric only)' });
@@ -31,12 +35,16 @@ export const actions: Actions = {
             return fail(400, { message: 'Incorrect username or password' });
         }
 
+        const cookie = pb.authStore.exportToCookie()
+        event.cookies.set("pb_auth", cookie, {path: "/"})
+
         return redirect(302, '/quests');
     },
     register: async (event) => {
         const formData = await event.request.formData();
         const username = formData.get('username');
         const password = formData.get('password');
+        const pb = new Pocketbase(env.DATABASE_URL)
 
         if (!validateUsername(username)) {
             return fail(400, { message: 'Invalid username' });
@@ -63,6 +71,9 @@ export const actions: Actions = {
             console.log(e);
             return fail(400, { message: 'Failed to log in after registration' });
         });
+
+        const cookie = pb.authStore.exportToCookie()
+        event.cookies.set("pb_auth", cookie, {path: "/"})
 
         return redirect(302, '/quests');
     },

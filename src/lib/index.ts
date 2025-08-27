@@ -5,14 +5,16 @@ import Pocketbase from 'pocketbase';
 import {redirect} from "@sveltejs/kit";
 if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
 
-export const pb = new Pocketbase(env.DATABASE_URL);
+const pb = new Pocketbase(env.DATABASE_URL);
 
-export async function requireLogin(expand = '') {
+export async function requireLogin(cookie: string, expand = '') {
+    const pb = new Pocketbase(env.DATABASE_URL);
+    pb.authStore.loadFromCookie(cookie)
     if (!pb.authStore.isValid || !pb.authStore.record) {
         return redirect(302, "/auth")
     }
     const user = await pb.collection("turtleusers").getFirstListItem(`id="${pb.authStore.record.id}"`, {
         expand
-    })
-    return user as unknown as User;
+    }) as unknown as User
+    return {pb, user};
 }

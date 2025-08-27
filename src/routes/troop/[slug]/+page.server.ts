@@ -1,9 +1,9 @@
 import type {PageServerLoad} from "./$types";
 import {redirect} from "@sveltejs/kit";
-import {pb, requireLogin} from "$lib";
+import {requireLogin} from "$lib";
 
 export const load: PageServerLoad = async (event) => {
-    const user = await requireLogin()
+    const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
     const memberID = event.params.slug;
 
     const result2 = await pb.collection("turtleusers").update(user.id, {

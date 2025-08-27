@@ -1,9 +1,9 @@
 import type {PageServerLoad} from "./$types";
-import {pb, requireLogin} from "$lib";
+import {requireLogin} from "$lib";
 
 export const load: PageServerLoad = async (event) => {
     // fetch the user's assigned quests from the database
-    const user = await requireLogin()
+    const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "")
     const questId = event.params.slug;
 
     const progress = user.assigned.filter(q => q.id === questId)[0]?.progress || 0;
@@ -24,8 +24,7 @@ export const actions = {
         const questId = event.params.slug;
         const clueId = parseInt(formData.get('clueId') as string);
         const answer = formData.get('clue-answer-'+ clueId) as string;
-        const user = await requireLogin();
-
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
         const quest = await pb.collection('turtlequests').getOne(questId);
 
         const clues = quest.clues as Clue[];

@@ -1,10 +1,10 @@
 import type {PageServerLoad} from "./$types";
 import {redirect} from "@sveltejs/kit";
-import {pb, requireLogin} from "$lib";
+import {requireLogin} from "$lib";
 
 export const load: PageServerLoad = async (event) => {
     // fetch the user's created quests from the database
-    const user = await requireLogin();
+    const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
 
     const results = await pb.collection("turtlequests").getFullList({
         filter: `author.id = "${user.id}"`,
@@ -19,11 +19,12 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions = {
     create: async (event) => {
-        if (!pb.authStore.record) return {success: false, error: "You must be logged in to create a quest."};
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
+
         const result = await pb.collection("turtlequests").create({
             title: "New Quest",
             description: "This is a new quest.",
-            author: pb.authStore.record.id,
+            author: user.id,
             clues: [],
         })
         return {success: true, quest: result};

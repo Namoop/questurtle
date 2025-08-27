@@ -1,10 +1,9 @@
 import type {PageServerLoad} from "./$types";
-import {pb, requireLogin} from "$lib";
+import {requireLogin} from "$lib";
 
 export const load: PageServerLoad = async (event) => {
     // fetch the user's created quests from the database
-    const user = await requireLogin("troop")
-
+    const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "","troop")
     const questId = event.params.slug;
 
     const quest = await pb.collection("turtlequests")
@@ -32,9 +31,8 @@ export const actions = {
         const questId = event.params.slug;
         const title = formData.get('name') as string;
         const description = formData.get('description') as string;
-
-        const userId = pb.authStore.record?.id;
-        if (!userId) {
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
+        if (!user.id) {
             return { success: false, error: "You must be logged in to update a quest." };
         }
 
@@ -48,9 +46,9 @@ export const actions = {
         const formData = await event.request.formData();
         const questId = event.params.slug;
         const clues = JSON.parse(formData.get('clues') as string);
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
 
-        const userId = pb.authStore.record?.id;
-        if (!userId) {
+        if (!user.id) {
             return { success: false, error: "You must be logged in to update a quest." };
         }
 
@@ -62,6 +60,7 @@ export const actions = {
         const formData = await event.request.formData();
         const questId = event.params.slug;
         const memberId = formData.get('memberId') as string;
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
 
         const result = await pb.collection("turtlequests").update(questId, {
             "shared+": [memberId]
@@ -71,6 +70,7 @@ export const actions = {
         const formData = await event.request.formData();
         const questId = event.params.slug;
         const memberId = formData.get('memberId') as string;
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
 
         const result = await pb.collection("turtlequests").update(questId, {
             "shared-": [memberId]
