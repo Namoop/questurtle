@@ -29,8 +29,8 @@ export const actions = {
 
         const clues = quest.clues as Clue[];
         const clue = clues[clueId];
-        const answers = clue.answers.split("\n");
-        const correct = answers.includes(answer);
+        const answers = clue.answers.split("\n").map(a=>a.toLowerCase());
+        const correct = answers.includes(answer.toLowerCase());
 
         if (!correct) {
             return { success: false, error: "Incorrect answer." };
