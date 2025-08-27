@@ -80,6 +80,16 @@
             console.error("Failed to de-assign member:", response.statusText);
         }
     }
+
+    async function delClue() {
+        if (hash === 0) return; // Safety check
+        if (!confirm("Are you sure you want to delete this clue? This action cannot be undone.")) return;
+        quest.clues.splice(hash - 1, 1);
+        hash = Math.max(0, hash - 1); // Move to the previous clue or stay at 0
+        page.url.hash = hash + '';
+        replaceState(page.url.toString(), {})
+        await saveClues();
+    }
 </script>
 
 
@@ -143,5 +153,8 @@
 </div>
 
 <form>
+    {#if hash > 0}
+    <button onclick={delClue} class="bg-red-500 text-white p-2 rounded-md">Remove</button>
+    {/if}
     <button onclick={newClue} class="bg-blue-500 text-white p-2 rounded-md">Add Clue</button>
 </form>
