@@ -151,14 +151,14 @@
     {/each}
 </div>
 
-<div class="overflow-hidden {showDesc ? '' : 'h-20'} w-full">
-<form onchange={saveQuest} class="m-4 bg-white rounded-lg p-4 w-full">
+<div class="overflow-hidden {showDesc ? '' : 'h-20'} w-full max-w-3xl">
+<form onchange={saveQuest} class="m-4 bg-white rounded-lg p-4 w-full ">
     <div class="mb-4 flex gap-4 w-full">
         <input type="text" id="name" name="name" bind:value={quest.title}
                class="p-1 mt-1 block w-full font-bold text-2xl text-center outline-none focus:underline underline-offset-10"
                required>
         <div class="h-4">
-            <button class="py-2 bg-gray-200 rounded-full w-10" onclick="{()=>showDesc = !showDesc}">{showDesc ? '⌃' : '⌄'}</button>
+            <button class="py-2 bg-gray-200 rounded-full w-10" onclick="{()=>showDesc = !showDesc}">{showDesc ? '^' : 'v'}</button>
         </div>
     </div>
     <div class="mb-4 w-full">
@@ -168,7 +168,7 @@
 </form>
 </div>
 
-<div class="my-4 flex flex-col gap-4 items-center justify-center w-full">
+<div class="my-4 flex flex-col gap-4 items-center justify-center w-full max-w-3xl">
     <div class="mb-4 w-full text-center">
         <input placeholder="clue title" oninput={saveClues} type="text" id="clue-title"
                name="clue_title" bind:value={quest.clues[hash].title}
