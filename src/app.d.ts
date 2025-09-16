@@ -29,8 +29,10 @@ declare global {
 		clues: Clue[]
 	}
 	type Clue = {
-		id: string,
+		title: string,
 		description: string,
+		notes: string,
+		location: string,
 		answers: string,
 	}
 } // interface PageData {}

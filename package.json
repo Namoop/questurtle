@@ -27,6 +27,8 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-node": "^5.3.1",
+		"carta-md": "^4.11.1",
+		"isomorphic-dompurify": "^2.26.0",
 		"pocketbase": "^0.26.2",
 		"qrcode": "^1.5.4"
 	},

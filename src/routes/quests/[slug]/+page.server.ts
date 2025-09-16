@@ -22,8 +22,8 @@ export const actions = {
     check: async (event) => {
         const formData = await event.request.formData();
         const questId = event.params.slug;
-        const clueId = parseInt(formData.get('clueId') as string);
-        const answer = formData.get('clue-answer-'+ clueId) as string;
+        const clueId = parseInt(formData.get('index') as string);
+        const answer = formData.get('answer') as string;
         const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
         const quest = await pb.collection('turtlequests').getOne(questId);
 

@@ -25,7 +25,13 @@ export const actions = {
             title: "New Quest",
             description: "This is a new quest.",
             author: user.id,
-            clues: [],
+            clues: [{
+                title: "New Clue",
+                description: "New clue",
+                answers: "answer",
+                notes: "",
+                location: "",
+            }],
         })
         return {success: true, quest: result};
 

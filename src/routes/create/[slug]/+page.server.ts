@@ -26,10 +26,10 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions = {
-    update: async (event) => {
+    saveQuest: async (event) => {
         const formData = await event.request.formData();
         const questId = event.params.slug;
-        const title = formData.get('name') as string;
+        const title = formData.get('title') as string;
         const description = formData.get('description') as string;
         const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
         if (!user.id) {
