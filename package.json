@@ -26,6 +26,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@cartamd/plugin-code": "^4.2.0",
 		"@sveltejs/adapter-node": "^5.3.1",
 		"carta-md": "^4.11.1",
 		"isomorphic-dompurify": "^2.26.0",

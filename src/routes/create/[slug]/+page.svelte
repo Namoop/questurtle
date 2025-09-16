@@ -7,7 +7,9 @@
     import {replaceState} from "$app/navigation";
     import {Carta, MarkdownEditor} from 'carta-md';
     import 'carta-md/default.css';
+    import '@cartamd/plugin-code/default.css';
     import DOMPurify from 'isomorphic-dompurify';
+    import { code } from '@cartamd/plugin-code';
 
     let {data}: { data: PageServerData } = $props();
 
@@ -18,6 +20,7 @@
 
     const editorOptions = {
         sanitizer: DOMPurify.sanitize,
+        extensions: [code()]
     };
 
     const descEditor = new Carta(editorOptions);
@@ -116,16 +119,21 @@
 </script>
 
 <style>
-    /* Set your monospace font  */
-    /* Required to have the editor working correctly! */
     :global(.carta-font-code) {
         font-family: '...', monospace;
-        font-size: 1.1rem;
-        /*line-height: 1.1rem;*/
         letter-spacing: normal;
+    }
+    :global(.carta-input) {
+        font-size: inherit !important;
     }
     :global(.carta-renderer) {
         white-space: pre-wrap;
+    }
+    :global(.carta-renderer pre) {
+        overflow-x: scroll;
+    }
+    :global(.carta-icons-menu) {
+        background-color: white;
     }
 </style>
 
@@ -160,13 +168,13 @@
 </form>
 </div>
 
-<div class="m-4 flex flex-col gap-4 items-center justify-center w-full">
+<div class="my-4 flex flex-col gap-4 items-center justify-center w-full">
     <div class="mb-4 w-full text-center">
         <input placeholder="clue title" oninput={saveClues} type="text" id="clue-title"
                name="clue_title" bind:value={quest.clues[hash].title}
                class="p-1 mt-1 block w-full border-gray-300 rounded-md shadow-sm text-xl font-semibold focus:border-blue-500 focus:ring-blue-500">
     </div>
-    <form onchange={saveClues} class="w-full">
+    <form onchange={saveClues} class="w-full text-sm sm:text-base">
         <MarkdownEditor mode="tabs" carta={clueEditor} bind:value={quest.clues[hash].description}/>
     </form>
     <div class="mb-4">
