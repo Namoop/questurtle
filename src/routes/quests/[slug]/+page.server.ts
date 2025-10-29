@@ -13,8 +13,9 @@ export const load: PageServerLoad = async (event) => {
     return {
         quest: {
             ...quest,
+            complete: user.assigned.filter(q => q.id === questId)[0]?.complete || false,
             clues: quest.clues.slice(0, progress+1) as Clue[],
-        } as unknown as Quest,
+        } as unknown as Quest & {complete: Boolean},
     };
 };
 

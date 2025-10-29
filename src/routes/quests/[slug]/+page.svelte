@@ -52,7 +52,7 @@
                 <Markdown {carta} value={quest.clues[hash].description}/>
             {/key}
         </div>
-        <form class="mb-4" method="post" action="?/check" use:enhance={submit} hidden={hash !== quest.clues.length - 1}>
+        <form class="mb-4" method="post" action="?/check" use:enhance={submit} hidden={quest.complete || hash !== quest.clues.length - 1}>
             <label for="clue-answer" class="block text-sm font-medium text-gray-700">Clue Answer</label>
             <input type="hidden" name="index" value="{hash}" hidden>
             <input type="text" name="answer"
