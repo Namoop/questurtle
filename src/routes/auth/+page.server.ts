@@ -1,15 +1,10 @@
 import {fail, redirect} from '@sveltejs/kit';
-import {requireLogin} from '$lib';
 import type {Actions, PageServerLoad} from './$types';
 import Pocketbase from "pocketbase";
 import {env} from "$env/dynamic/private";
 
 export const load: PageServerLoad = async (event) => {
-    // const pb = await requireLogin(event.cookies.get("pb_auth") || "");
-    // if (pb.authStore.isValid) {
-    //     return redirect(302, '/quests');
-    // }
-    // return {};
+    //
 };
 
 export const actions: Actions = {
@@ -44,7 +39,12 @@ export const actions: Actions = {
         const formData = await event.request.formData();
         const username = formData.get('username');
         const password = formData.get('password');
+        const confirmPassword = formData.get('confirmPassword');
         const pb = new Pocketbase(env.DATABASE_URL)
+
+        if (password !== confirmPassword) {
+            return fail(400, { message: 'Passwords do not match' });
+        }
 
         if (!validateUsername(username)) {
             return fail(400, { message: 'Invalid username' });
