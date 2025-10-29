@@ -16,7 +16,7 @@ export const load: PageServerLoad = async (event) => {
     })
 
     const complete = await pb.collection("turtlequests").getFullList({
-        filter: user.assigned.filter(x => x.complete).map(a=>`id="${a.id}"`).join(' ') || 'id=0',
+        filter: user.assigned.filter(x => x.complete).map(a=>`id="${a.id}"`).join(' || ') || 'id=0',
         expand: 'author',
     })
 
