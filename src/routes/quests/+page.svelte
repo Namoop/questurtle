@@ -27,6 +27,8 @@
             }
         }
     }
+
+    let descriptionModal = $state(null as Quest | null);
 </script>
 
 {#if shared.length > 0}
@@ -37,6 +39,8 @@
 {/if}
 
 {#if shared_modal_show}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onclick={() => shared_modal_show = false}>
         <div class="bg-white p-6 rounded-lg max-w-md w-full relative" onclick={(event)=>event.stopPropagation()}>
             <h2 class="text-2xl font-bold mb-4">Quests Shared With You</h2>
@@ -63,9 +67,28 @@
     {/if}
     {#each quests as quest}
         <div class="bg-white p-4 rounded shadow mb-4">
-            <h2 class="text-xl font-bold">{quest.name}</h2>
-            <p>{quest.description}</p>
-            <a class="link" href="/quests/{quest.id}">Open quest</a>
+            <h2 class="text-xl font-bold">{quest.title}</h2>
+            <button class="text-left line-clamp-3" onclick={()=>descriptionModal = quest}>{quest.description}</button>
+            <div class="flex justify-between">
+                <a class="link" href="/quests/{quest.id}">Open quest</a>
+                <p>@{quest.author}</p>
+            </div>
         </div>
     {/each}
 </div>
+
+{#if descriptionModal}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onclick={() => descriptionModal = null}>
+        <div class="bg-white p-6 rounded-lg max-w-md w-full relative" onclick={(event)=>event.stopPropagation()}>
+            <h2 class="text-2xl font-bold">{descriptionModal.title}</h2>
+            <p class="mb-4">@{descriptionModal.author}</p>
+            <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900" onclick={() => descriptionModal = null}>✖</button>
+            <p>{descriptionModal.description}</p>
+            <div class="flex p-4 justify-center">
+                <a class="rounded-lg bg-blue-500 text-white px-4 py-2" href="/quests/{descriptionModal.id}">Open quest</a>
+            </div>
+        </div>
+    </div>
+{/if}
