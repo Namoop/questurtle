@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import {page} from "$app/state";
 	import type {PageServerData} from "./$types";
 
@@ -19,7 +18,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/turtle.png" />
 	<title>{tab_name} {tab_name ? '| ' : ''}questurtle </title>
 </svelte:head>
 
@@ -32,7 +31,7 @@
 <!--		</div>-->
 		<div class="flex items-center justify-between w-full line max-w-xl">
 			<div class="flex gap-4">
-						<div class="w-full max-w-12 aspect-[3/2] rounded-4xl">
+						<div class="w-full max-w-12 rounded-4xl">
 							<img src="/turtle.png" class="w-full h-full" alt="Turtle" />
 						</div>
 				<h1 class="text-4xl font-extrabold text-center">questurtle</h1>
