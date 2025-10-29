@@ -19,13 +19,15 @@ declare global {
 		}[],
 		assigned: {
 			id: string,
-			progress: number
+			progress: number,
+            complete: boolean
 		}[]
 	}
 	type Quest = {
 		id: string,
 		title: string,
 		description: string,
+        author: string,
 		clues: Clue[]
 	}
 	type Clue = {

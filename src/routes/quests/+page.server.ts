@@ -4,7 +4,6 @@ import { requireLogin} from "$lib";
 export const load: PageServerLoad = async (event) => {
     // fetch the user's assigned quests from the database
     const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
-    user.assigned = user.assigned || []
 
     const shared = (await pb.collection("turtlequests").getFullList({
         filter: `shared.id ?= "${user.id}"`,
@@ -12,10 +11,14 @@ export const load: PageServerLoad = async (event) => {
     })).filter(q => !user.assigned.find((a: any) => a.id === q.id)) // filter out already accepted quests
 
     const assigned = await pb.collection("turtlequests").getFullList({
-        filter: user.assigned.map(a=>`id="${a.id}"`).join(' || ') || 'id=0',
+        filter: user.assigned.filter(x => !x.complete).map(a=>`id="${a.id}"`).join(' || ') || 'id=0',
+        expand: 'author',
     })
 
-    // hide clues based on progress
+    const complete = await pb.collection("turtlequests").getFullList({
+        filter: user.assigned.filter(x => x.complete).map(a=>`id="${a.id}"`).join(' ') || 'id=0',
+        expand: 'author',
+    })
 
 
     return {
@@ -28,7 +31,18 @@ export const load: PageServerLoad = async (event) => {
             description: q.description,
             author: q.expand?.author.username || 'Unknown',
         })),
-        quests: assigned
+        quests: assigned.map(q => ({
+            id: q.id,
+            title: q.title,
+            description: q.description,
+            author: q.expand?.author.username || 'Unknown',
+        })),
+        completed: complete.map(q => ({
+            id: q.id,
+            title: q.title,
+            description: q.description,
+            author: q.expand?.author.username || 'Unknown',
+        }))
     };
 
 };
@@ -47,7 +61,7 @@ export const actions = {
         if (user.assigned.find((q: any) => q.id === questId)) {
             return {success: false, error: "You have already accepted this quest."};
         }
-        user.assigned.push({id: questId, progress: 0});
+        user.assigned.push({id: questId, progress: 0, complete: false});
         await pb.collection("turtleusers").update(user.id, {
             assigned: user.assigned
         });

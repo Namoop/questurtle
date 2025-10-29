@@ -36,7 +36,7 @@
 </form>
 
 
-<div class="py-8 max-w-md">
+<div class="py-8 max-w-md w-full">
     {#each quests as quest}
         <div id="card-{quest.id}" class="border border-gray-100 p-4 rounded shadow mb-4 relative">
             <h2 class="text-xl font-bold">{quest.title}</h2>

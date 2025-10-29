@@ -13,7 +13,7 @@ export const load: PageServerLoad = async (event) => {
     return {
         quest: {
             ...quest,
-            clues: quest.clues.slice(0, progress+1) as Clue[], // Assuming you have a Clue type defined
+            clues: quest.clues.slice(0, progress+1) as Clue[],
         } as unknown as Quest,
     };
 };
@@ -39,6 +39,11 @@ export const actions = {
         user.assigned = user.assigned || [];
         const questInfo = user.assigned.filter((q: any) => q.id === questId)[0];
         questInfo.progress = Math.max(questInfo.progress, clueId + 1);
+
+        if (questInfo.progress === clues.length - 1) {
+            questInfo.complete = true;
+        }
+
         await pb.collection("turtleusers").update(user.id, {
             assigned: user.assigned
         });

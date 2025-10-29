@@ -5,8 +5,9 @@
 
     let {data}: {data: PageServerData, } = $props();
 
-    let quests = $derived(data.quests || []) as Quest[];
-    let shared = $derived(data.shared || []) as Quest[];
+    let quests =    $derived(data.quests || []) as Quest[];
+    let shared =    $derived(data.shared || []) as Quest[];
+    let completed = $derived(data.completed || []) as Quest[];
 
     let shared_modal_show = $state(false)
 
@@ -75,6 +76,18 @@
             </div>
         </div>
     {/each}
+    {#if completed.length > 0}
+        <h1 class="text-2xl font-bold mt-8 mb-4">Completed Quests</h1>
+        {#each completed as quest}
+            <div class="bg-gray-100 p-4 rounded shadow mb-4">
+                <h2 class="text-xl font-bold">{quest.title}</h2>
+                <div class="flex justify-between">
+                    <a class="link" href="/quests/{quest.id}">Open quest</a>
+                    <p>@{quest.author}</p>
+                </div>
+            </div>
+        {/each}
+    {/if}
 </div>
 
 {#if descriptionModal}
