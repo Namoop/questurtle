@@ -8,11 +8,11 @@ export const load: PageServerLoad = async (event) => {
 
     const results = await pb.collection("turtlequests").getFullList({
         filter: `author.id = "${user.id}"`,
-        sort: 'created'
+        sort: '-created'
     })
 
     return {
-        my_quests: results
+        my_quests: results as unknown as Quest[],
     };
 
 };
@@ -34,6 +34,14 @@ export const actions = {
             }],
         })
         return {success: true, quest: result};
+
+    },
+    delete: async (event) => {
+        const formData = await event.request.formData();
+        const questId = formData.get('questId') as string;
+        const {pb, user} = await requireLogin(event.cookies.get("pb_auth") || "");
+
+        await pb.collection("turtlequests").delete(questId);
 
     }
 };
